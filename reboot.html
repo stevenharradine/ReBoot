@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+			}
+			
+			.topbar {
+				background: url(topbar.jpg);
+				color: white;
+				text-align: center;
+				height: 25px;
+				width: 100%;
+			}
+			
+			#menu {
+				display: none;
+				position: absolute;
+				top: 25px;
+				left: 0px;
+				
+				background: #333333;
+				color: #cccccc;
+				width: 100px;
+			}
+			
+			.menu-item {
+				padding-left: 10px;
+			}
+			
+			.menu-item:hover {
+				cursor: pointer;
+				background: #cccccc;
+				color: #333333
+			}
+		</style>
+		<script type="text/javascript" src="urlvars.js"></script>
+		<script type="text/javascript" src="dropmenu.js"></script>
+		<script>
+			// Taken from https://css-tricks.com/snippets/javascript/get-url-variables/ on 20150906 @ 15:55 EST
+			Requests = {
+			    QueryString : function(item){
+				var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+				return svalue ? svalue[1] : svalue;
+			    }
+			}
+			
+			var refreshTime = 30;	// in minutes
+			var url = Requests.QueryString("url");
+			
+			// get current time
+			var date = new Date();
+			var hours = date.getHours() % 12;
+			var minutes = date.getMinutes();
+			var seconds = date.getSeconds();
+			var strhours;
+			var strminutes;
+			var strseconds;
+			
+			// no leading zeros for hour
+			strhours = hours;
+			
+			// add leading zeros (if nessasary) to minutes and seconds
+			if (minutes < 10) {
+				strminutes = "0" + minutes;
+			} else {
+				strminutes = minutes;
+			}
+			if (seconds < 10) {
+				strseconds = "0" + seconds;
+			} else {
+				strseconds = seconds;
+			}
+			
+			// calculate next refresh time (for informational uses)
+			if (minutes + refreshTime >= 60) {
+				strnexthours = hours + 1;
+				strnextminutes = (minutes + refreshTime) % 60;
+			} else {
+				strnexthours = hours;
+				strnextminutes = minutes + refreshTime;
+			}
+		</script>
+		<meta http-equiv='refresh' content='900' />
+	</head>
+	<body>
+		<div style="position: absolute; z-index: 1; padding-left: 20px;"><img onclick="javascript: toggle_menu();" style="position: absolute; left: 0;" src="reboot.jpg" />ReBoot (<script type="text/javascript">document.write ("Next Update: " + strnexthours + ":" + strnextminutes);</script>)</div>
+		<div id="menu">
+			<div onclick="location.href=location.href;" class="menu-item">ReLoad</div>
+			<div onclick="alert('not implemented');" class="menu-item">Set Interval</div>
+			<div onclick="location.href = 'reboot.html?url=' + prompt('Enter the site', url)" class="menu-item">Set Site</div>
+		</div>
+		<div class="topbar">Last Updated @ 
+			<script type="text/javascript">
+				document.write (strhours + ":" + strminutes + ":" + strseconds);
+			</script>
+		</div>
+		<iframe src="_blank" frameborder="0" height="95%" width="100%" id="main_frame"></iframe>
+		
+		<script>
+			document.getElementById ("main_frame").setAttribute ("src", url);
+		</script>
+	</body>
+</html>
